@@ -3,6 +3,7 @@
 This shell scripts will enable runit services for Void Linux or based distro
 
 **How does it work?**
+
 To run enable-services-runit for Void Linux, run [enable-services-runit](https://github.com/RunnerTechHype/enable-services-runit/blob/main/enable-services-runit) with sudo or root
 
 **Usage**

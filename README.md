@@ -16,20 +16,25 @@ To run enable-services-runit for Void Linux, run [enable-services-runit](https:/
 ```
 (Note: This script must be run as root or with `sudo`)
 # Installation guide:
-Before run, you need **git** packages is installed on Void Linux, if not, you can type `sudo xbps-install -S git``
-**Then clone the repository**
+Before run, you need **git** packages is installed on Void Linux, if not, you can type `sudo xbps-install -S git`
+**Then clone the repository:**
 ```bash
 cd /usr/bin
-git clone https://github.com/RunnerTechHype/enable-services-runit.git
+sudo git clone https://github.com/RunnerTechHype/enable-services-runit.git
 sudo chmod +x /usr/bin/enable-services-runit
 ```
-**And then run this script**
+**And then run this script:**
 ```bash
 sudo enable-services-runit -e <service_name>
 ```
+**Automation**
+```bash
+cd /usr/bin && sudo git clone https://github.com/RunnerTechHype/enable-services-runit.git && sudo chmod +x /usr/bin/enable-services-runit
+```
+
 **In this guide, i will take an example for enable `dbus` service**
 
-Type
+Type:
 ```bash
 sudo enable-services-runit -e dbus -n
 ```

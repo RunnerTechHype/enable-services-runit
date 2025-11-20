@@ -1,0 +1,82 @@
+#!/bin/bash
+# SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2025 RunnerTechHype
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# Script to enable/disable services for runit (Void Linux)
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run as root"
+    exit 1
+fi
+
+ENABLE_SERVICES=()
+DISABLE_SERVICES=()
+START_IMMEDIATELY=false
+
+while getopts "e:d:hn" opt; do
+    case $opt in
+        e) ENABLE_SERVICES+=("$OPTARG") ;;
+        d) DISABLE_SERVICES+=("$OPTARG") ;;
+        h)
+            echo "Usage:"
+            echo "  $0 -e <service_name> [-n]"
+            echo "    -e: Enable service (can be used multiple times)"
+            echo "    -n: Start service immediately after enabling"
+            echo "  $0 -d <service_name>"
+            echo "    -d: Disable service (can be used multiple times)"
+            exit 0
+            ;;
+        n) START_IMMEDIATELY=true ;;
+        *)
+            echo "Invalid option. Use -h for help."
+            exit 1
+            ;;
+    esac
+done
+
+# Enable services
+for SERVICE in "${ENABLE_SERVICES[@]}"; do
+    if [ -d "/etc/sv/$SERVICE" ]; then
+        ln -s "/etc/sv/$SERVICE" "/var/service/" 2>/dev/null
+        echo "Enabled service: $SERVICE"
+        if [ "$START_IMMEDIATELY" = true ]; then
+            sv start "$SERVICE"
+            echo "Started service: $SERVICE"
+        fi
+    else
+        echo "Service $SERVICE does not exist in /etc/sv/"
+    fi
+done
+
+# Disable services
+for SERVICE in "${DISABLE_SERVICES[@]}"; do
+    if [ -L "/var/service/$SERVICE" ]; then
+        rm "/var/service/$SERVICE"
+        echo "Disabled service: $SERVICE"
+    else
+        echo "Service $SERVICE is not enabled in /var/service/"
+    fi
+done
+
+# Logging
+LOG_FILE="/var/log/enable-services-runit.log"
+{
+    echo "Script executed on: $(date)"
+    echo "Enabled services: ${ENABLE_SERVICES[*]}"
+    echo "Disabled services: ${DISABLE_SERVICES[*]}"
+    if [ "$START_IMMEDIATELY" = true ]; then
+        echo "Services started immediately after enabling."
+    fi
+} >> "$LOG_FILE"

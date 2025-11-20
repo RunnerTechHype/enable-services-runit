@@ -20,8 +20,14 @@ Before run, you need **git** packages is installed on Void Linux, if not, you ca
 
 **Then clone the repository:**
 ```bash
-cd /usr/bin
-sudo git clone https://github.com/RunnerTechHype/enable-services-runit.git
+git clone https://github.com/RunnerTechHype/enable-services-runit.git ~/github/enable-services-runit
+```
+**Copy the script to /usr/bin**
+```bash
+sudo cp ~/github/enable-services-runit /usr/bin
+```
+**Make the script executable**
+```bash
 sudo chmod +x /usr/bin/enable-services-runit
 ```
 **And then run this script:**

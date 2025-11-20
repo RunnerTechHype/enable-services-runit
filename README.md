@@ -20,7 +20,7 @@ Before run, you need **git** packages is installed on Void Linux, if not, you ca
 ```bash
 cd /usr/bin
 git clone https://github.com/RunnerTechHype/enable-services-runit.git
-sudo chmox +x /usr/bin/enable-services-runit
+sudo chmod +x /usr/bin/enable-services-runit
 ```
 **And then run this script**
 ```bash

@@ -34,10 +34,6 @@ sudo chmod +x /usr/bin/enable-services-runit
 ```bash
 sudo enable-services-runit -e <service_name>
 ```
-**Automation**
-```bash
-cd /usr/bin && sudo git clone https://github.com/RunnerTechHype/enable-services-runit.git && sudo chmod +x /usr/bin/enable-services-runit
-```
 
 **In this guide, i will take an example for enable `dbus` service**
 

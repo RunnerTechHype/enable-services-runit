@@ -16,6 +16,8 @@
 #
 # Script to enable/disable services for runit (Void Linux)
 
+set -euo pipefail
+
 if [ "$EUID" -ne 0 ]; then
     echo "Please run as root"
     exit 1
@@ -25,35 +27,37 @@ ENABLE_SERVICES=()
 DISABLE_SERVICES=()
 START_IMMEDIATELY=false
 
+usage() {
+    echo "Usage:"
+    echo "  $0 -e <service_name> [-n] [-e <service_name> ...]"
+    echo "    -e: Enable service (can be used multiple times)"
+    echo "    -n: Start service immediately after enabling"
+    echo "  $0 -d <service_name> [-d <service_name> ...]"
+    echo "    -d: Disable service (can be used multiple times)"
+    exit 0
+}
+
 while getopts "e:d:hn" opt; do
     case $opt in
         e) ENABLE_SERVICES+=("$OPTARG") ;;
         d) DISABLE_SERVICES+=("$OPTARG") ;;
-        h)
-            echo "Usage:"
-            echo "  $0 -e <service_name> [-n]"
-            echo "    -e: Enable service (can be used multiple times)"
-            echo "    -n: Start service immediately after enabling"
-            echo "  $0 -d <service_name>"
-            echo "    -d: Disable service (can be used multiple times)"
-            exit 0
-            ;;
+        h) usage ;;
         n) START_IMMEDIATELY=true ;;
-        *)
-            echo "Invalid option. Use -h for help."
-            exit 1
-            ;;
+        *) echo "Invalid option. Use -h for help." ; exit 1 ;;
     esac
 done
 
 # Enable services
 for SERVICE in "${ENABLE_SERVICES[@]}"; do
     if [ -d "/etc/sv/$SERVICE" ]; then
-        ln -s "/etc/sv/$SERVICE" "/var/service/" 2>/dev/null
-        echo "Enabled service: $SERVICE"
+        if [ ! -L "/var/service/$SERVICE" ]; then
+            ln -s "/etc/sv/$SERVICE" "/var/service/$SERVICE"
+            echo "Enabled service: $SERVICE"
+        else
+            echo "Service $SERVICE is already enabled."
+        fi
         if [ "$START_IMMEDIATELY" = true ]; then
-            sv start "$SERVICE"
-            echo "Started service: $SERVICE"
+            sv start "$SERVICE" || echo "Failed to start service: $SERVICE"
         fi
     else
         echo "Service $SERVICE does not exist in /etc/sv/"
@@ -63,7 +67,7 @@ done
 # Disable services
 for SERVICE in "${DISABLE_SERVICES[@]}"; do
     if [ -L "/var/service/$SERVICE" ]; then
-        rm "/var/service/$SERVICE"
+        rm -f "/var/service/$SERVICE"
         echo "Disabled service: $SERVICE"
     else
         echo "Service $SERVICE is not enabled in /var/service/"
@@ -72,11 +76,13 @@ done
 
 # Logging
 LOG_FILE="/var/log/enable-services-runit.log"
+mkdir -p "$(dirname "$LOG_FILE")"
 {
     echo "Script executed on: $(date)"
-    echo "Enabled services: ${ENABLE_SERVICES[*]}"
-    echo "Disabled services: ${DISABLE_SERVICES[*]}"
+    echo "Enabled services: ${ENABLE_SERVICES[*]:-none}"
+    echo "Disabled services: ${DISABLE_SERVICES[*]:-none}"
     if [ "$START_IMMEDIATELY" = true ]; then
         echo "Services started immediately after enabling."
     fi
+    echo "---------------------------------------------"
 } >> "$LOG_FILE"

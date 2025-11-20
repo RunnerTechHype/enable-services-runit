@@ -35,6 +35,7 @@ sudo enable-services-runit -e dbus -n
 ```
 
 -e dbus = Enables the dbus service.
+
 -n = Starts the service immediately after enabling.
 
 (Note again: This script must be run as root or with `sudo`)

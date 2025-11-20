@@ -17,6 +17,7 @@ To run enable-services-runit for Void Linux, run [enable-services-runit](https:/
 (Note: This script must be run as root or with `sudo`)
 # Installation guide:
 Before run, you need **git** packages is installed on Void Linux, if not, you can type `sudo xbps-install -S git`
+
 **Then clone the repository:**
 ```bash
 cd /usr/bin

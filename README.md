@@ -24,7 +24,7 @@ sudo chmox +x /usr/bin/enable-services-runit
 ```bash
 sudo enable-services-runit -e <service_name>
 ```
-**In this guide, i will take an example for enable `dbus` service
+**In this guide, i will take an example for enable `dbus` service**
 Type
 ```bash
 sudo enable-services-runit -e dbus -n

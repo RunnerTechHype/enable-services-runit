@@ -13,7 +13,7 @@ To run enable-services-runit for Void Linux, run [enable-services-runit](https:/
   enable-services-runit -d <service_name>
     -d: Disable service (can be used multiple times)
 ```
-**Note: Must run this script as root**
+(Note: This script must be run as root or with `sudo`)
 # Installation guide:
 Before run, you need **git** packages is installed on Void Linux, if not, you can type `sudo xbps-install -S git``
 **Then clone the repository**
@@ -32,7 +32,9 @@ Type
 ```bash
 sudo enable-services-runit -e dbus -n
 ```
-(Include -n will start services immediately after enable)
+-e dbus = Enables the dbus service.
+-n = Starts the service immediately after enabling.
+(Note again: This script must be run as root or with `sudo`)
 # License
 **This script is licensed under [Apache License 2.0](https://github.com/RunnerTechHype/enable-services-runit/blob/main/LICENSE)**
 # Bugs report/Features request
